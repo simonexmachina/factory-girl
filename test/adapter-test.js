@@ -1,5 +1,7 @@
-var Adapter = require('..').Adapter;
+var Adapter = require('../lib/adapter');
 var tests = require('../lib/adapter-tests');
+var should = require('should');
+var context = describe;
 
 var TestModel = function(props) {
   this.props = props;

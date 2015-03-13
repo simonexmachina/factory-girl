@@ -1,5 +1,7 @@
 /* global describe, beforeEach, afterEach */
-var factory = require('..');
+var Adapter = require('../lib/adapter');
+var ObjectAdapter = require('../lib/object-adapter');
+var factory = require('../factory-girl');
 var should = require('should');
 var context = describe;
 
@@ -114,7 +116,7 @@ describe('factory', function() {
 
       it('from the adapter', function(done) {
         var FaultyAdapter = function() {};
-        FaultyAdapter.prototype = new factory.Adapter();
+        FaultyAdapter.prototype = new Adapter();
         FaultyAdapter.prototype.save = function(doc, Model, cb) {
           cb(new Error('Save failed'));
         };
@@ -283,7 +285,7 @@ describe('factory', function() {
   describe('ObjectAdapter', function() {
     it('can be used to return raw objects', function() {
       var another = new factory.Factory();
-      another.setAdapter(new factory.ObjectAdapter(), 'anotherModel');
+      another.setAdapter(new ObjectAdapter(), 'anotherModel');
       another.define('anotherModel', Job, {
         title: 'Scientist',
         company: 'Foobar Inc.'

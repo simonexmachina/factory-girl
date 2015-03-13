@@ -1,10 +1,25 @@
-(function() {
+(function(factory) {
+
+
+  if (typeof exports !== 'undefined') {
+    var Factory = factory(require('./lib/adapter'));
+    module.exports = new Factory();
+    module.exports.Factory = Factory;
+  }
+  else if (typeof define === 'function' && define.amd) {
+    define(['factory-girl-adapter'], factory);
+  }
+  else {
+    factory(Adapter);
+  }
+}(function(Adapter) {
+
   var Factory = function() {
     var factory = this,
-        factories = {},
-        defaultAdapter = new Adapter(),
-        adapters = {},
-        created = [];
+    factories = {},
+    defaultAdapter = new Adapter(),
+      adapters = {},
+      created = [];
 
     factory.create = function(name, attrs, callback) {
       if (typeof attrs === 'function') {
@@ -26,7 +41,7 @@
         if (!err) created.push([name, doc]);
         callback(err, doc);
       });
-    }
+    };
 
     factory.define = function(name, model, attributes) {
       factories[name] = {
@@ -68,7 +83,7 @@
       }, function(err) {
         if (err) return callback(err);
         var adapter = factory.adapterFor(name),
-            doc = adapter.build(model, attrs);
+          doc = adapter.build(model, attrs);
         callback(null, doc);
       });
     };
@@ -130,7 +145,7 @@
       }, function(err) {
         args.callback(err, results);
       });
-    }
+    };
 
     function parseBuildManyArgs(name, attrsArray, num, callback) {
       if (typeof num == 'function') { // name, Array, callback
@@ -161,11 +176,11 @@
         num: num,
         callback: callback
       };
-    }
+    };
 
     factory.createMany = function(name, attrsArray, num, callback) {
       var args = parseBuildManyArgs.apply(null, arguments),
-          results = [];
+      results = [];
       callback = args.callback;
       args.callback = function(err, docs) {
         if (err) return callback(err);
@@ -201,94 +216,59 @@
     factory.cleanup = function(callback) {
       asyncForEach(created.reverse(), function(tuple, cb) {
         var name = tuple[0],
-            doc = tuple[1],
-            adapter = factory.adapterFor(name),
-            model = factories[name].model;
+        doc = tuple[1],
+        adapter = factory.adapterFor(name),
+          model = factories[name].model;
         adapter.destroy(doc, model, cb);
       }, callback);
       created = [];
     };
-  };
 
-  var Adapter = function() {};
-
-  Adapter.prototype.build = function(Model, props) {
-    var doc = new Model();
-    this.set(props, doc, Model);
-    return doc;
-  };
-  Adapter.prototype.get = function(doc, attr, Model) {
-    return doc[attr];
-  };
-  Adapter.prototype.set = function(props, doc, Model) {
-    var key;
-    for (key in props) {
-      if (props.hasOwnProperty(key)) {
-        doc[key] = props[key];
-      }
-    }
-  };
-  Adapter.prototype.save = function(doc, Model, cb) {
-    doc.save(cb);
-  };
-  /**
-    Be aware that the model may have already been destroyed
-   */
-  Adapter.prototype.destroy = function(doc, Model, cb) {
-    doc.destroy(cb);
-  };
-
-  if (typeof module === 'undefined') {
-    this.factory = {};
-    module = this.factory;
-  }
-  module.exports = new Factory();
-  module.exports.Adapter = Adapter;
-  module.exports.Factory = Factory;
-  module.exports.ObjectAdapter = require('./lib/object-adapter');
-
-  function merge(obj1, obj2) {
-    if (obj1 && obj2) {
-      var key;
-      for (key in obj2) {
-        if (obj2.hasOwnProperty(key)) {
-          obj1[key] = obj2[key];
+    function merge(obj1, obj2) {
+      if (obj1 && obj2) {
+        var key;
+        for (key in obj2) {
+          if (obj2.hasOwnProperty(key)) {
+            obj1[key] = obj2[key];
+          }
         }
       }
+      return obj1;
     }
-    return obj1;
-  }
-  function copy(obj) {
-    var newObj = {};
-    if (obj) {
-      merge(newObj, obj);
-    }
-    return newObj;
-  }
-  function keys(obj) {
-    var rv = [], key;
-    for (key in obj) {
-      if (obj.hasOwnProperty(key)) {
-       rv.push(key);
+    function copy(obj) {
+      var newObj = {};
+      if (obj) {
+        merge(newObj, obj);
       }
+      return newObj;
     }
-    return rv;
-  }
-  function asyncForEach(array, handler, callback) {
-    var length = array.length,
-        index = -1;
-    function processNext(err) {
-      if (err) return callback(err);
-      index++;
-      if (index < length) {
-        handler(array[index], processNext, index);
+    function keys(obj) {
+      var rv = [], key;
+      for (key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          rv.push(key);
+        }
       }
-      else {
-        callback && setImmediate(callback);
-      }
+      return rv;
     }
-    processNext();
-  }
+    function asyncForEach(array, handler, callback) {
+      var length = array.length,
+      index = -1;
+      function processNext(err) {
+        if (err) return callback(err);
+        index++;
+        if (index < length) {
+          handler(array[index], processNext, index);
+        }
+        else {
+          callback && setImmediate(callback);
+        }
+      }
+      processNext();
+    }
+  };
 
-}());
+  return Factory;
+
+}));
 
