@@ -5,6 +5,7 @@
   "author": "Simon Wade",
   "version": "1.2.0",
   "keywords": [
+    "factory-girl",
     "factory",
     "test",
     "bdd",
