@@ -278,21 +278,17 @@
   var Adapter = function() {};
     
   Adapter.prototype.build = function(Model, props) {
-    var doc = new Model();
-    this.set(props, doc, Model);
-    return doc;
+    return new Model(props);
   };
+
   Adapter.prototype.get = function(doc, attr, Model) {
-    return doc[attr];
+	return doc.get(attr);
   };
+
   Adapter.prototype.set = function(props, doc, Model) {
-    var key;
-    for (key in props) {
-      if (props.hasOwnProperty(key)) {
-        doc[key] = props[key];
-      }
-    }
+	doc.set(props);
   };
+
   Adapter.prototype.save = function(doc, Model, cb) {
     doc.save(cb);
   };
