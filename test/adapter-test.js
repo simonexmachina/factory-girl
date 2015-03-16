@@ -1,5 +1,5 @@
-var Adapter = require('../lib/adapter');
-var tests = require('../lib/adapter-tests');
+var Adapter = require('../factory-girl').Adapter;
+var tests = require('./adapter-tests');
 var should = require('should');
 var context = describe;
 

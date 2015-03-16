@@ -1,7 +1,7 @@
 /* global describe, beforeEach, afterEach */
-var Adapter = require('../lib/adapter');
-var ObjectAdapter = require('../lib/object-adapter');
 var factory = require('../factory-girl');
+var Adapter = factory.Adapter;
+var ObjectAdapter = factory.ObjectAdapter;
 var should = require('should');
 var context = describe;
 

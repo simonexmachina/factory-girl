@@ -2,17 +2,23 @@
 
 
   if (typeof exports !== 'undefined') {
-    var Factory = factory(require('./lib/adapter'));
-    module.exports = new Factory();
-    module.exports.Factory = Factory;
+    var _factory = factory();
+    module.exports = _factory;
+    module.exports.Factory = _factory.Factory;
+	module.exports.Adapter = _factory.Adapter;
+	module.exports.ObjectAdapter = require('./lib/object-adapter');
   }
   else if (typeof define === 'function' && define.amd) {
-    define(['factory-girl-adapter'], factory);
+    define(['factory-girl-object-adapter'], function(ObjectAdapter) {
+		var _factory = factory();
+		_factory.ObjectAdapter = ObjectAdapter;
+		return _factory; 
+	});
   }
   else {
-    factory(Adapter);
+    factory();
   }
-}(function(Adapter) {
+}(function() {
 
   var Factory = function() {
     var factory = this,
@@ -268,7 +274,39 @@
     }
   };
 
-  return Factory;
+  /**** Adapter ****/
+  var Adapter = function() {};
+    
+  Adapter.prototype.build = function(Model, props) {
+    var doc = new Model();
+    this.set(props, doc, Model);
+    return doc;
+  };
+  Adapter.prototype.get = function(doc, attr, Model) {
+    return doc[attr];
+  };
+  Adapter.prototype.set = function(props, doc, Model) {
+    var key;
+    for (key in props) {
+      if (props.hasOwnProperty(key)) {
+        doc[key] = props[key];
+      }
+    }
+  };
+  Adapter.prototype.save = function(doc, Model, cb) {
+    doc.save(cb);
+  };
+  /**
+   *     Be aware that the model may have already been destroyed
+   *        */
+  Adapter.prototype.destroy = function(doc, Model, cb) {
+    doc.destroy(cb);
+  };
 
+  var factory = new Factory();
+  factory.Adapter = Adapter;
+  factory.Factory = Factory;
+
+  return factory; 
 }));
 
