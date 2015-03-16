@@ -6,6 +6,8 @@
 
 It started out as a fork of [factory-lady](https://github.com/petejkim/factory-lady), but the fork deviated quite a bit. This module uses an adapter to talk to your models so it can support different ORMs such as [Bookshelf](https://github.com/aexmachina/factory-girl-bookshelf),  [Sequelize](https://github.com/aexmachina/factory-girl-sequelize), [JugglingDB](https://github.com/rehanift/factory-girl-jugglingdb), and [Mongoose](https://github.com/jesseclark/factory-girl-mongoose) (and doesn't use `throw` for errors that might occur during save).
 
+## Under construction with Backbone.Model - Tests are broken
+
 ## Installation
 
 Node.js:
@@ -15,6 +17,18 @@ npm install factory-girl
 ```
 
 To use `factory-girl` in the browser or other JavaScript environments, just include `index.js` and access `window.Factory`.
+
+Require.js
+
+Include into your paths:
+```
+paths: {
+    ...
+    'factory-girl-object-adapter': 'path/to/lib/object-adapter',
+    'factory-girl': 'path/to/factory-girl'
+    ...
+}
+```
 
 ## Defining Factories
 
