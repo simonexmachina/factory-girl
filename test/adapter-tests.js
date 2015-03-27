@@ -25,7 +25,7 @@ module.exports = function(adapter, Model, countModels, instanceOf) {
     factory.build('model', function(err, model) {
       if (err) return done(err);
       instanceOf(model, Model).should.be.true;
-      model.get('name').should.equal('Rudy');
+      adapter.get(model, 'name').should.equal('Rudy');
 
       countModels(function(err, length) {
         if (err) return done(err);
@@ -39,7 +39,7 @@ module.exports = function(adapter, Model, countModels, instanceOf) {
     factory.create('model', function(err, model) {
       if (err) return done(err);
       instanceOf(model, Model).should.be.true;
-      model.get('name').should.equal('Rudy');
+      adapter.get(model, 'name').should.equal('Rudy');
 
       countModels(function(err, length) {
         if (err) return done(err);
