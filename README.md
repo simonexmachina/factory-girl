@@ -6,11 +6,10 @@
 
 It started out as a fork of [factory-lady](https://github.com/petejkim/factory-lady), but the fork deviated quite a bit. This module uses an adapter to talk to your models so it can support different ORMs such as [Bookshelf](https://github.com/aexmachina/factory-girl-bookshelf),  [Sequelize](https://github.com/aexmachina/factory-girl-sequelize), [JugglingDB](https://github.com/rehanift/factory-girl-jugglingdb), and [Mongoose](https://github.com/jesseclark/factory-girl-mongoose) (and doesn't use `throw` for errors that might occur during save).
 
-## Under construction with Backbone.Model - Tests are broken
 
 ## Installation
 
-Node.js:
+_Node.js_
 
 ``` bash
 npm install factory-girl
@@ -18,17 +17,38 @@ npm install factory-girl
 
 To use `factory-girl` in the browser or other JavaScript environments, just include `index.js` and access `window.Factory`.
 
-Require.js
+_Require.js_
 
 Include into your paths:
 ```
 paths: {
     ...
-    'factory-girl-object-adapter': 'path/to/lib/object-adapter',
     'factory-girl': 'path/to/factory-girl'
     ...
 }
 ```
+
+## Backbone
+
+_Node.js_
+```
+var Adapter = require('lib/backbone-adapter.js');
+var factory = new Factory();
+factory.setAdapter(adapter);
+```
+
+_Require.js_
+```
+paths: {
+    ...
+    'factory-girl-backbone-adapter': 'path/to/factory-girl/lib/backbone-adapter'
+    'factory-girl': 'path/to/factory-girl'
+    ...
+}
+```
+
+_Under construction_
+I need to see how to setAdapter on factory
 
 ## Defining Factories
 
