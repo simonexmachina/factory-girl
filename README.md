@@ -28,27 +28,30 @@ paths: {
 }
 ```
 
-## Backbone
+## Backbone with [factory-girl-backbone](https://github.com/celsomarques/factory-girl-backbone)
 
 _Node.js_
 ```
-var Adapter = require('lib/backbone-adapter.js');
+var BackboneAdapter = require('lib/factory-girl-backbone.js');
 var factory = new Factory();
-factory.setAdapter(adapter);
+factory.setAdapter(new BackboneAdapter());
 ```
 
 _Require.js_
 ```
 paths: {
     ...
-    'factory-girl-backbone-adapter': 'path/to/factory-girl/lib/backbone-adapter'
+    'factory-girl-backbone': 'path/to/factory-girl-backbone/factory-girl-backbone'
     'factory-girl': 'path/to/factory-girl'
     ...
 }
 ```
 
-_Under construction_
-I need to see how to setAdapter on factory
+```
+define([ 'factory-girl', 'factory-girl-adapter'], function(factory, BackboneAdapter) {
+    factory.setAdapter(new BackboneAdapter());
+});
+```
 
 ## Defining Factories
 
