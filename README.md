@@ -31,9 +31,12 @@ paths: {
 ## Backbone with [factory-girl-backbone](https://github.com/celsomarques/factory-girl-backbone)
 
 _Node.js_
+```bash
+npm install factory-girl-backbone
 ```
-var BackboneAdapter = require('lib/factory-girl-backbone.js');
-var factory = new Factory();
+
+```
+var BackboneAdapter = require('factory-girl-backbone');
 factory.setAdapter(new BackboneAdapter());
 ```
 
