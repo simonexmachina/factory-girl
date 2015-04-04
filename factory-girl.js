@@ -5,15 +5,15 @@
     var _factory = factory();
     module.exports = _factory;
     module.exports.Factory = _factory.Factory;
-	module.exports.Adapter = _factory.Adapter;
-	module.exports.ObjectAdapter = require('./lib/object-adapter');
+    module.exports.Adapter = _factory.Adapter;
+    module.exports.ObjectAdapter = require('./lib/object-adapter');
   }
   else if (typeof define === 'function' && define.amd) {
     define(['factory-girl-object-adapter'], function(ObjectAdapter) {
-		var _factory = factory();
-		_factory.ObjectAdapter = ObjectAdapter;
-		return _factory; 
-	});
+      var _factory = factory();
+      _factory.ObjectAdapter = ObjectAdapter;
+      return _factory; 
+    });
   }
   else {
     factory();
@@ -24,8 +24,8 @@
     var factory = this,
     factories = {},
     defaultAdapter = new Adapter(),
-      adapters = {},
-      created = [];
+    adapters = {},
+    created = [];
 
     factory.create = function(name, attrs, callback) {
       if (typeof attrs === 'function') {
@@ -89,7 +89,7 @@
       }, function(err) {
         if (err) return callback(err);
         var adapter = factory.adapterFor(name),
-          doc = adapter.build(model, attrs);
+        doc = adapter.build(model, attrs);
         callback(null, doc);
       });
     };
@@ -224,7 +224,7 @@
         var name = tuple[0],
         doc = tuple[1],
         adapter = factory.adapterFor(name),
-          model = factories[name].model;
+        model = factories[name].model;
         adapter.destroy(doc, model, cb);
       }, callback);
       created = [];
@@ -276,7 +276,7 @@
 
   /**** Adapter ****/
   var Adapter = function() {};
-    
+
   Adapter.prototype.build = function(Model, props) {
     var doc = new Model();
     this.set(props, doc, Model);
