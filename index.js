@@ -1,4 +1,24 @@
-(function() {
+(function(factory) {
+
+  if (typeof exports !== 'undefined') {
+    var _factory = factory();
+    module.exports = _factory;
+    module.exports.Factory = _factory.Factory;
+    module.exports.Adapter = _factory.Adapter;
+    module.exports.ObjectAdapter = require('./lib/object-adapter');
+  }
+  else if (typeof define === 'function' && define.amd) {
+    define(['factory-girl-object-adapter'], function(ObjectAdapter) {
+      var _factory = factory();
+      _factory.ObjectAdapter = ObjectAdapter;
+      return _factory;
+    });
+  }
+  else {
+    factory();
+  }
+}(function() {
+
   var Factory = function() {
     var factory = this,
         factories = {},
@@ -26,7 +46,7 @@
         if (!err) created.push([name, doc]);
         callback(err, doc);
       });
-    }
+    };
 
     factory.define = function(name, model, attributes) {
       factories[name] = {
@@ -130,7 +150,7 @@
       }, function(err) {
         args.callback(err, results);
       });
-    }
+    };
 
     function parseBuildManyArgs(name, attrsArray, num, callback) {
       if (typeof num == 'function') { // name, Array, callback
@@ -161,7 +181,7 @@
         num: num,
         callback: callback
       };
-    }
+    };
 
     factory.createMany = function(name, attrsArray, num, callback) {
       var args = parseBuildManyArgs.apply(null, arguments),
@@ -208,8 +228,55 @@
       }, callback);
       created = [];
     };
+
+    function merge(obj1, obj2) {
+      if (obj1 && obj2) {
+        var key;
+        for (key in obj2) {
+          if (obj2.hasOwnProperty(key)) {
+            obj1[key] = obj2[key];
+          }
+        }
+      }
+      return obj1;
+    };
+
+    function copy(obj) {
+      var newObj = {};
+      if (obj) {
+        merge(newObj, obj);
+      }
+      return newObj;
+    };
+
+    function keys(obj) {
+      var rv = [], key;
+      for (key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          rv.push(key);
+        }
+      }
+      return rv;
+    };
+
+    function asyncForEach(array, handler, callback) {
+      var length = array.length,
+          index = -1;
+      function processNext(err) {
+        if (err) return callback(err);
+        index++;
+        if (index < length) {
+          handler(array[index], processNext, index);
+        }
+        else {
+          callback && setImmediate(callback);
+        }
+      }
+      processNext();
+    };
   };
 
+  /**** Adapter ****/
   var Adapter = function() {};
 
   Adapter.prototype.build = function(Model, props) {
@@ -238,57 +305,9 @@
     doc.destroy(cb);
   };
 
-  if (typeof module === 'undefined') {
-    this.factory = {};
-    module = this.factory;
-  }
-  module.exports = new Factory();
-  module.exports.Adapter = Adapter;
-  module.exports.Factory = Factory;
-  module.exports.ObjectAdapter = require('./lib/object-adapter');
+  var factory = new Factory();
+  factory.Adapter = Adapter;
+  factory.Factory = Factory;
 
-  function merge(obj1, obj2) {
-    if (obj1 && obj2) {
-      var key;
-      for (key in obj2) {
-        if (obj2.hasOwnProperty(key)) {
-          obj1[key] = obj2[key];
-        }
-      }
-    }
-    return obj1;
-  }
-  function copy(obj) {
-    var newObj = {};
-    if (obj) {
-      merge(newObj, obj);
-    }
-    return newObj;
-  }
-  function keys(obj) {
-    var rv = [], key;
-    for (key in obj) {
-      if (obj.hasOwnProperty(key)) {
-       rv.push(key);
-      }
-    }
-    return rv;
-  }
-  function asyncForEach(array, handler, callback) {
-    var length = array.length,
-        index = -1;
-    function processNext(err) {
-      if (err) return callback(err);
-      index++;
-      if (index < length) {
-        handler(array[index], processNext, index);
-      }
-      else {
-        callback && setImmediate(callback);
-      }
-    }
-    processNext();
-  }
-
-}());
-
+  return factory;
+}));
