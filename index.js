@@ -239,14 +239,16 @@
         }
       }
       return obj1;
-    }
+    };
+
     function copy(obj) {
       var newObj = {};
       if (obj) {
         merge(newObj, obj);
       }
       return newObj;
-    }
+    };
+
     function keys(obj) {
       var rv = [], key;
       for (key in obj) {
@@ -255,7 +257,8 @@
         }
       }
       return rv;
-    }
+    };
+
     function asyncForEach(array, handler, callback) {
       var length = array.length,
           index = -1;
@@ -270,7 +273,7 @@
         }
       }
       processNext();
-    }
+    };
   };
 
   /**** Adapter ****/
