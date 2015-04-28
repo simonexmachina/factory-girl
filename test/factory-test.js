@@ -1,5 +1,5 @@
 /* global describe, beforeEach, afterEach */
-var factory = require('../factory-girl');
+var factory = require('../');
 var Adapter = factory.Adapter;
 var ObjectAdapter = factory.ObjectAdapter;
 var should = require('should');

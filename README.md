@@ -6,55 +6,15 @@
 
 It started out as a fork of [factory-lady](https://github.com/petejkim/factory-lady), but the fork deviated quite a bit. This module uses an adapter to talk to your models so it can support different ORMs such as [Bookshelf](https://github.com/aexmachina/factory-girl-bookshelf),  [Sequelize](https://github.com/aexmachina/factory-girl-sequelize), [JugglingDB](https://github.com/rehanift/factory-girl-jugglingdb), and [Mongoose](https://github.com/jesseclark/factory-girl-mongoose) (and doesn't use `throw` for errors that might occur during save).
 
-
 ## Installation
 
-_Node.js_
+Node.js:
 
 ``` bash
 npm install factory-girl
 ```
 
 To use `factory-girl` in the browser or other JavaScript environments, just include `index.js` and access `window.Factory`.
-
-_Require.js_
-
-Include into your paths:
-```
-paths: {
-    ...
-    'factory-girl': 'path/to/factory-girl'
-    ...
-}
-```
-
-## Backbone with [factory-girl-backbone](https://github.com/celsomarques/factory-girl-backbone)
-
-_Node.js_
-```bash
-npm install factory-girl-backbone
-```
-
-```
-var BackboneAdapter = require('factory-girl-backbone');
-factory.setAdapter(new BackboneAdapter());
-```
-
-_Require.js_
-```
-paths: {
-    ...
-    'factory-girl-backbone': 'path/to/factory-girl-backbone/factory-girl-backbone'
-    'factory-girl': 'path/to/factory-girl'
-    ...
-}
-```
-
-```
-define([ 'factory-girl', 'factory-girl-adapter'], function(factory, BackboneAdapter) {
-    factory.setAdapter(new BackboneAdapter());
-});
-```
 
 ## Defining Factories
 

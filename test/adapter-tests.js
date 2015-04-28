@@ -1,4 +1,4 @@
-var Factory = require('../factory-girl').Factory;
+var Factory = require('../').Factory;
 require('chai').should();
 
 /**

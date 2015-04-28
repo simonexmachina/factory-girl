@@ -1,6 +1,5 @@
 (function(factory) {
 
-
   if (typeof exports !== 'undefined') {
     var _factory = factory();
     module.exports = _factory;
@@ -12,7 +11,7 @@
     define(['factory-girl-object-adapter'], function(ObjectAdapter) {
       var _factory = factory();
       _factory.ObjectAdapter = ObjectAdapter;
-      return _factory; 
+      return _factory;
     });
   }
   else {
@@ -22,10 +21,10 @@
 
   var Factory = function() {
     var factory = this,
-    factories = {},
-    defaultAdapter = new Adapter(),
-    adapters = {},
-    created = [];
+        factories = {},
+        defaultAdapter = new Adapter(),
+        adapters = {},
+        created = [];
 
     factory.create = function(name, attrs, callback) {
       if (typeof attrs === 'function') {
@@ -89,7 +88,7 @@
       }, function(err) {
         if (err) return callback(err);
         var adapter = factory.adapterFor(name),
-        doc = adapter.build(model, attrs);
+            doc = adapter.build(model, attrs);
         callback(null, doc);
       });
     };
@@ -186,7 +185,7 @@
 
     factory.createMany = function(name, attrsArray, num, callback) {
       var args = parseBuildManyArgs.apply(null, arguments),
-      results = [];
+          results = [];
       callback = args.callback;
       args.callback = function(err, docs) {
         if (err) return callback(err);
@@ -222,9 +221,9 @@
     factory.cleanup = function(callback) {
       asyncForEach(created.reverse(), function(tuple, cb) {
         var name = tuple[0],
-        doc = tuple[1],
-        adapter = factory.adapterFor(name),
-        model = factories[name].model;
+            doc = tuple[1],
+            adapter = factory.adapterFor(name),
+            model = factories[name].model;
         adapter.destroy(doc, model, cb);
       }, callback);
       created = [];
@@ -259,7 +258,7 @@
     }
     function asyncForEach(array, handler, callback) {
       var length = array.length,
-      index = -1;
+          index = -1;
       function processNext(err) {
         if (err) return callback(err);
         index++;
@@ -297,8 +296,8 @@
     doc.save(cb);
   };
   /**
-   *     Be aware that the model may have already been destroyed
-   *        */
+    Be aware that the model may have already been destroyed
+   */
   Adapter.prototype.destroy = function(doc, Model, cb) {
     doc.destroy(cb);
   };
@@ -307,6 +306,5 @@
   factory.Adapter = Adapter;
   factory.Factory = Factory;
 
-  return factory; 
+  return factory;
 }));
-

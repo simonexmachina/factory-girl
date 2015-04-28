@@ -1,4 +1,4 @@
-var Adapter = require('../factory-girl').Adapter;
+var Adapter = require('../').Adapter;
 var tests = require('./adapter-tests');
 var should = require('should');
 var context = describe;
