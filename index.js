@@ -57,6 +57,16 @@
       };
     };
 
+    factory.assocBuild = function(name, key, attrs) {
+      attrs = attrs || {};
+      return function(callback) {
+        factory.build(name, attrs, function(err, doc) {
+          if (err) return callback(err);
+          callback(null, key ? doc[key] : doc);
+        });
+      };
+    };
+
     factory.assocMany = function(name, key, num, attrsArray) {
       if (arguments.length < 4) {
         if (typeof key === 'number') {
@@ -67,6 +77,27 @@
       }
       return function(callback) {
         factory.createMany(name, attrsArray, num, function(err, docs) {
+          if (err) return callback(err);
+          if (key) {
+            for (var i = 0; i < docs.length; ++i) {
+              docs[i] = docs[i][key];
+            }
+          }
+          callback(null, docs);
+        });
+      };
+    };
+
+    factory.assocManyBuild = function(name, key, num, attrsArray) {
+      if (arguments.length < 4) {
+        if (typeof key === 'number') {
+          attrsArray = num;
+          num = key;
+          key = null;
+        }
+      }
+      return function(callback) {
+        factory.buildMany(name, attrsArray, num, function(err, docs) {
           if (err) return callback(err);
           if (key) {
             for (var i = 0; i < docs.length; ++i) {
