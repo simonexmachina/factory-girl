@@ -40,7 +40,7 @@ var Post    = require('../models/post');
 factory.define('user', User, {
   email: factory.sequence(function(n) {
     return 'user' + n + '@demo.com';
-  },
+  }),
   // async functions can be used by accepting a callback as an argument
   async: function(callback) {
     somethingAsync(callback);
