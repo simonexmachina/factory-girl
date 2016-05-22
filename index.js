@@ -47,18 +47,22 @@
     factory.create = builderProxy('create');
     factory.createMany = builderProxy('createMany');
 
-    factory.assoc = function(name, key, attrs) {
+    factory.assocHelper = function(constructor, name, key, attrs) {
       attrs = attrs || {};
       return function(callback) {
-        factory.create(name, attrs, function(err, doc) {
+        constructor(name, attrs, function(err, doc) {
           if (err) return callback(err);
           callback(null, key ? doc[key] : doc);
         });
       };
     };
 
-    factory.assocMany = function(name, key, num, attrsArray) {
-      if (arguments.length < 4) {
+    factory.assoc = function(name, key, attrs) {
+      return factory.assocHelper(factory.create, name, key, attrs);
+    };
+
+    factory.assocManyHelper = function(constructor, name, key, num, attrsArray) {
+      if (attrsArray === undefined || num === undefined) {
         if (typeof key === 'number') {
           attrsArray = num;
           num = key;
@@ -66,7 +70,7 @@
         }
       }
       return function(callback) {
-        factory.createMany(name, attrsArray, num, function(err, docs) {
+        constructor(name, attrsArray, num, function(err, docs) {
           if (err) return callback(err);
           if (key) {
             for (var i = 0; i < docs.length; ++i) {
@@ -77,6 +81,11 @@
         });
       };
     };
+
+    factory.assocMany = function (name, key, num, attrsArray) {
+      return factory.assocManyHelper(factory.createMany, name, key, num, attrsArray);
+    };
+
 
     factory.sequence = function(fn) {
       var result;
