@@ -114,6 +114,8 @@ factory.build('post', function(err, post) {
 });
 ```
 
+Similarly, `assocBuild` and `assocBuildMany` are available if you require unsaved instances.
+
 ## Defining Sequences
 
 ```javascript
