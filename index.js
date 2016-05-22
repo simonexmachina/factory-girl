@@ -65,20 +65,13 @@
       return factory.assocHelper(factory.build, name, key, attrs);
     };
 
-    factory.assocManyHelper = function(constructor, name, key, num, attrsArray) {
-      if (attrsArray === undefined || num === undefined) {
-        if (typeof key === 'number') {
-          attrsArray = num;
-          num = key;
-          key = null;
-        }
-      }
+    factory.assocManyHelper = function(constructor, args) {
       return function(callback) {
-        constructor(name, attrsArray, num, function(err, docs) {
+        constructor(args.name, args.attrsArray, args.num, function(err, docs) {
           if (err) return callback(err);
-          if (key) {
+          if (args.key) {
             for (var i = 0; i < docs.length; ++i) {
-              docs[i] = docs[i][key];
+              docs[i] = docs[i][args.key];
             }
           }
           callback(null, docs);
@@ -86,12 +79,42 @@
       };
     };
 
+    function parseAssocManyArgs(name, key, num, attrsArray) {
+      if (typeof key === 'number') { // name, num, Array
+        attrsArray = num;
+        num = key;
+        key = null;
+      }
+      if (!(attrsArray instanceof Array)) {
+        if (typeof num !== 'number') throw new Error("num must be specified when attrsArray is not an array");
+        var attrs = attrsArray;
+        attrsArray = new Array(num);
+        for (var i = 0; i < num; i++) {
+          attrsArray[i] = attrs;
+        }
+      }
+      if (!attrsArray) {
+        attrsArray = new Array(num);
+      }
+      else if (attrsArray.length !== num) {
+        attrsArray.length = num;
+      }
+      return {
+        name: name,
+        key: key,
+        num: num,
+        attrsArray: attrsArray
+      };
+    };
+
     factory.assocMany = function (name, key, num, attrsArray) {
-      return factory.assocManyHelper(factory.createMany, name, key, num, attrsArray);
+      var args = parseAssocManyArgs.apply(null, arguments);
+      return factory.assocManyHelper(factory.createMany, args);
     };
 
     factory.assocBuildMany = function(name, key, num, attrsArray) {
-      return factory.assocManyHelper(factory.buildMany, name, key, num, attrsArray);
+      var args = parseAssocManyArgs.apply(null, arguments);
+      return factory.assocManyHelper(factory.buildMany, args);
     };
 
     factory.sequence = function(fn) {
