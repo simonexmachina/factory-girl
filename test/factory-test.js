@@ -48,6 +48,16 @@ describe('factory', function() {
       title: factory.assoc('job', 'title')
     });
 
+    factory.define('built person', Person, {
+      name: "Built Name",
+      email: function() {
+        return "email" + (emailCounter++) + "@noemail.com";
+      },
+      age: 25,
+      job: factory.assocBuild('job', null, { company: 'Bazqux Co.' }),
+      title: factory.assocBuild('job', 'title')
+    });
+
     factory.define('job', Job, {
       title: 'Engineer',
       company: 'Foobar Inc.',
@@ -62,6 +72,12 @@ describe('factory', function() {
       name: 'Fruit Company',
       employees: factory.assocMany('person', 3),
       managers: factory.assocMany('person', 'name', 2)
+    });
+
+    factory.define('built company', Company, {
+      name: 'Sugar Beet Company',
+      employees: factory.assocBuildMany('person', 8),
+      managers: factory.assocBuildMany('person', 'name', 13)
     });
 
     factory.define('post', Post, {
@@ -195,6 +211,23 @@ describe('factory', function() {
         });
       });
 
+      context('factory containing a build association', function() {
+        it('is able to handle that', function(done) {
+          factory.build('built person', { age: 30 }, function(err, person) {
+            (person instanceof Person).should.be.true;
+            person.should.not.have.property('saveCalled');
+            person.name.should.eql('Built Name');
+            person.age.should.eql(30);
+            (person.job instanceof Job).should.be.true;
+            person.job.title.should.eql('Engineer');
+            person.job.company.should.eql('Bazqux Co.');
+            person.job.should.not.have.property('saveCalled');
+            person.title.should.eql('Engineer');
+            done();
+          });
+        });
+      });
+
       context('factory containing a multi association', function() {
         it('is able to handle that', function(done){
           factory.build('company', function(err, company) {
@@ -216,6 +249,43 @@ describe('factory', function() {
             company.managers[0].should.eql('Person 5');
             (company.managers[1] instanceof Person).should.be.false;
             company.managers[1].should.eql('Person 6');
+            done();
+          });
+        });
+      });
+
+      context('factory containing a multi-build association', function() {
+        it('is able to handle that', function(done){
+          factory.build('built company', function(err, company) {
+            (company instanceof Company).should.be.true;
+            company.should.not.have.property('saveCalled');
+            company.name.should.eql('Sugar Beet Company');
+            company.should.have.property('employees');
+            (company.employees instanceof Array).should.be.true;
+            company.employees.length.should.eql(8);
+            (company.employees[0] instanceof Person).should.be.true;
+            company.employees[0].name.should.eql('Person 7');
+            company.employees[0].should.not.have.property('saveCalled');
+            (company.employees[1] instanceof Person).should.be.true;
+            company.employees[1].name.should.eql('Person 8');
+            company.employees[1].should.not.have.property('saveCalled');
+            (company.employees[2] instanceof Person).should.be.true;
+            company.employees[2].name.should.eql('Person 9');
+            company.employees[2].should.not.have.property('saveCalled');
+            (company.employees[7] instanceof Person).should.be.true;
+            company.employees[7].name.should.eql('Person 14');
+            company.employees[7].should.not.have.property('saveCalled');
+            (company.managers instanceof Array).should.be.true;
+            company.managers.length.should.eql(13);
+            (company.managers[0] instanceof Person).should.be.false;
+            company.managers[0].should.eql('Person 15');
+            company.managers[0].should.not.have.property('saveCalled');
+            (company.managers[1] instanceof Person).should.be.false;
+            company.managers[1].should.eql('Person 16');
+            company.managers[1].should.not.have.property('saveCalled');
+            (company.managers[12] instanceof Person).should.be.false;
+            company.managers[12].should.eql('Person 27');
+            company.managers[12].should.not.have.property('saveCalled');
             done();
           });
         });

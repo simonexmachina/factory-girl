@@ -61,6 +61,10 @@
       return factory.assocHelper(factory.create, name, key, attrs);
     };
 
+    factory.assocBuild = function(name, key, attrs) {
+      return factory.assocHelper(factory.build, name, key, attrs);
+    };
+
     factory.assocManyHelper = function(constructor, name, key, num, attrsArray) {
       if (attrsArray === undefined || num === undefined) {
         if (typeof key === 'number') {
@@ -86,6 +90,9 @@
       return factory.assocManyHelper(factory.createMany, name, key, num, attrsArray);
     };
 
+    factory.assocBuildMany = function(name, key, num, attrsArray) {
+      return factory.assocManyHelper(factory.buildMany, name, key, num, attrsArray);
+    };
 
     factory.sequence = function(fn) {
       var result;
