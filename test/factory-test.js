@@ -3,6 +3,7 @@ var factory = require('..');
 var should = require('should');
 var context = describe;
 var sinon = require('sinon');
+var expect = require('chai').expect;
 
 describe('factory', function() {
   var Model, Person, Job, Post;
@@ -47,6 +48,10 @@ describe('factory', function() {
       job: factory.assoc('job', null, { company: 'Bazqux Co.' }),
       title: factory.assoc('job', 'title')
     });
+    factory.define('interestingPerson', Person,
+      { interests: ['running', 'chess']},
+      { extend: 'person' }
+    );
 
     factory.define('job', Job, {
       title: 'Engineer',
@@ -602,6 +607,29 @@ describe('factory', function() {
         job.company.should.eql('Foobar Inc.');
         done();
       });
+    });
+  });
+
+  describe('extend option', function() {
+    it('inherits properties of parent, and also has its own', function(done){
+      factory.build('interestingPerson', function(err, somePerson){
+        (somePerson instanceof Person).should.be.true;
+        somePerson.age.should.eql(25);
+        expect(somePerson.interests).to.contain('running', 'chess');
+        done();
+      });
+    });
+    it('uses the same sequence as its parent', function(done){
+      factory.build('person', function(err, parent) {
+        factory.build('interestingPerson', function(err, child) {
+          factory.build('person', function(err, secondParent ) {
+          expect(parent.name).to.equal('Person 1');
+          expect(child.name).to.equal('Person 2');
+          expect(secondParent.name).to.equal('Person 3');
+          done();
+          })
+        });
+      })
     });
   });
 
