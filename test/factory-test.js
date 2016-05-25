@@ -1,8 +1,9 @@
 /* global describe, beforeEach, afterEach */
 var factory = require('..');
 var should = require('should');
-var context = describe;
+// var context = describe;
 var sinon = require('sinon');
+var expect = require('chai').expect;
 
 describe('factory', function() {
   var Model, Person, Job, Post;
@@ -47,6 +48,10 @@ describe('factory', function() {
       job: factory.assoc('job', null, { company: 'Bazqux Co.' }),
       title: factory.assoc('job', 'title')
     });
+    factory.define('interestingPerson', Person,
+      { interests: ['running', 'chess']},
+      { extend: 'person' }
+    );
 
     factory.define('job', Job, {
       title: 'Engineer',
@@ -183,7 +188,7 @@ describe('factory', function() {
           factory.build('person', { age: 30 }, function(err, person) {
             (person instanceof Person).should.be.true;
             person.should.not.have.property('saveCalled');
-            person.name.should.eql('Person 1');
+            person.name.should.eql('Person 4');
             person.age.should.eql(30);
             (person.job instanceof Job).should.be.true;
             person.job.title.should.eql('Engineer');
@@ -205,17 +210,17 @@ describe('factory', function() {
             (company.employees instanceof Array).should.be.true;
             company.employees.length.should.eql(3);
             (company.employees[0] instanceof Person).should.be.true;
-            company.employees[0].name.should.eql('Person 2');
+            company.employees[0].name.should.eql('Person 5');
             (company.employees[1] instanceof Person).should.be.true;
-            company.employees[1].name.should.eql('Person 3');
+            company.employees[1].name.should.eql('Person 6');
             (company.employees[2] instanceof Person).should.be.true;
-            company.employees[2].name.should.eql('Person 4');
+            company.employees[2].name.should.eql('Person 7');
             (company.managers instanceof Array).should.be.true;
             company.managers.length.should.eql(2);
             (company.managers[0] instanceof Person).should.be.false;
-            company.managers[0].should.eql('Person 5');
+            company.managers[0].should.eql('Person 8');
             (company.managers[1] instanceof Person).should.be.false;
-            company.managers[1].should.eql('Person 6');
+            company.managers[1].should.eql('Person 9');
             done();
           });
         });
@@ -602,6 +607,29 @@ describe('factory', function() {
         job.company.should.eql('Foobar Inc.');
         done();
       });
+    });
+  });
+
+  describe('extend option', function() {
+    it('inherits properties of parent, and also has its own', function(done){
+      factory.build('interestingPerson', function(err, somePerson){
+        (somePerson instanceof Person).should.be.true;
+        somePerson.age.should.eql(25);
+        expect(somePerson.interests).to.contain('running', 'chess');
+        done();
+      });
+    });
+    it('uses the same sequence as its parent', function(done){
+      factory.build('person', function(err, parent) {
+        factory.build('interestingPerson', function(err, child) {
+          factory.build('person', function(err, secondParent ) {
+          expect(parent.name).to.equal('Person 1');
+          expect(child.name).to.equal('Person 2');
+          expect(secondParent.name).to.equal('Person 3');
+          done();
+          })
+        });
+      })
     });
   });
 
