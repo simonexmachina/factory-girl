@@ -1,7 +1,7 @@
 /* global describe, beforeEach, afterEach */
 var factory = require('..');
 var should = require('should');
-// var context = describe;
+var context = describe;
 var sinon = require('sinon');
 var expect = require('chai').expect;
 
