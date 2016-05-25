@@ -1,7 +1,7 @@
 /* global describe, beforeEach, afterEach */
 var factory = require('..');
 var should = require('should');
-var context = describe;
+// var context = describe;
 var sinon = require('sinon');
 var expect = require('chai').expect;
 
@@ -188,7 +188,7 @@ describe('factory', function() {
           factory.build('person', { age: 30 }, function(err, person) {
             (person instanceof Person).should.be.true;
             person.should.not.have.property('saveCalled');
-            person.name.should.eql('Person 1');
+            person.name.should.eql('Person 4');
             person.age.should.eql(30);
             (person.job instanceof Job).should.be.true;
             person.job.title.should.eql('Engineer');
@@ -210,17 +210,17 @@ describe('factory', function() {
             (company.employees instanceof Array).should.be.true;
             company.employees.length.should.eql(3);
             (company.employees[0] instanceof Person).should.be.true;
-            company.employees[0].name.should.eql('Person 2');
+            company.employees[0].name.should.eql('Person 5');
             (company.employees[1] instanceof Person).should.be.true;
-            company.employees[1].name.should.eql('Person 3');
+            company.employees[1].name.should.eql('Person 6');
             (company.employees[2] instanceof Person).should.be.true;
-            company.employees[2].name.should.eql('Person 4');
+            company.employees[2].name.should.eql('Person 7');
             (company.managers instanceof Array).should.be.true;
             company.managers.length.should.eql(2);
             (company.managers[0] instanceof Person).should.be.false;
-            company.managers[0].should.eql('Person 5');
+            company.managers[0].should.eql('Person 8');
             (company.managers[1] instanceof Person).should.be.false;
-            company.managers[1].should.eql('Person 6');
+            company.managers[1].should.eql('Person 9');
             done();
           });
         });
