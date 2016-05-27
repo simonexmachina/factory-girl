@@ -47,10 +47,10 @@
     factory.create = builderProxy('create');
     factory.createMany = builderProxy('createMany');
 
-    factory.assocHelper = function(constructor, name, key, attrs) {
+    factory.assocHelper = function(fn, name, key, attrs) {
       attrs = attrs || {};
       return function(callback) {
-        constructor(name, attrs, function(err, doc) {
+        fn(name, attrs, function(err, doc) {
           if (err) return callback(err);
           callback(null, key ? doc[key] : doc);
         });
@@ -65,9 +65,9 @@
       return factory.assocHelper(factory.build, name, key, attrs);
     };
 
-    factory.assocManyHelper = function(constructor, args) {
+    factory.assocManyHelper = function(fn, args) {
       return function(callback) {
-        constructor(args.name, args.attrsArray, args.num, function(err, docs) {
+        fn(args.name, args.attrsArray, args.num, function(err, docs) {
           if (err) return callback(err);
           if (args.key) {
             for (var i = 0; i < docs.length; ++i) {
