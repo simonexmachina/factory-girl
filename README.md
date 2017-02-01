@@ -142,7 +142,7 @@ Other builder options can be accessed, inside hooks, using `this.options`.
 ```javascript
 factory.define('post', Post, {
   // create associations using factory.assoc(model, key) or factory.assoc('user') to return the user object itself.
-  user_id: factory.assoc('user', 'id'),
+  user_id: factory.assoc('user', 'id', { kind: 'author' }),
   // create array of associations using factory.assocMany(model, key, num)
   comments: factory.assocMany('comment', 'text', 2)
 });
