@@ -6,6 +6,7 @@ export DefaultAdapter from './adapters/DefaultAdapter';
 export MongooseAdapter from './adapters/MongooseAdapter';
 export SequelizeAdapter from './adapters/SequelizeAdapter';
 export ReduxORMAdapter from './adapters/ReduxORMAdapter';
+export ObjectionAdapter from './adapters/ObjectionAdapter';
 
 const factory = new FactoryGirl();
 factory.FactoryGirl = FactoryGirl;
