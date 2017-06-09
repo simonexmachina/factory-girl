@@ -172,8 +172,6 @@ factory.attrsMany('post', 5, [{title: 'foo1'}, {title: 'foo2'}]).then(postAttrsA
 });
 ```
 
-Refer [API docs](docs/api.md) for complete API documentation.
-
 ### Factory#build
 
 Builds a new model instance that is not persisted.
@@ -227,7 +225,8 @@ specific models, or as the 'default adapter', which is used for any models for w
 adapter has not been specified. See the adapter docs for usage, but typical usage is:
 
 ```javascript
-const adapter = new factory.MongooseAdapter();
+const factory = require('factory-girl').factory;
+const adapter = new factoryGirl.MongooseAdapter();
 
 // use the mongoose adapter as the default adapter
 factory.setAdapter(adapter);
@@ -249,7 +248,6 @@ class MyModel {
   },
   destroy() {
     // destroy the model
-  }
   }
 }
 factory.define('model', MyModel);
