@@ -1,7 +1,7 @@
 {
   "name": "factory-girl",
   "description": "A factory library for Node.js and JavaScript inspired by factory_girl",
-  "main": "./src/index",
+  "main": "./dist/index",
   "author": [
     "@aexmachina",
     "@chetanism"

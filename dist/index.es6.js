@@ -1358,6 +1358,13 @@ var ObjectionAdapter = function (_DefaultAdapter) {
   }
 
   _createClass(ObjectionAdapter, [{
+    key: 'build',
+    value: function build(Model, props) {
+      var model = new Model();
+      model.$set(props);
+      return model;
+    }
+  }, {
     key: 'save',
     value: function save(doc, Model) {
       return Model.query().insert(doc);

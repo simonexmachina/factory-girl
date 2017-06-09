@@ -15,4 +15,8 @@ export default class DummyObjectionModel {
     };
   }
 
+  $set(props) {
+    Object.assign(this, props);
+  }
+
 }
