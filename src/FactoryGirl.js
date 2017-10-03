@@ -39,7 +39,12 @@ export default class FactoryGirl {
   }
 
   async attrs(name, attrs, buildOptions) {
-    return this.getFactory(name).attrs(attrs, buildOptions);
+    return this.getFactory(name)
+      .attrs(attrs, buildOptions)
+      .then(attr => (this.options.afterAttrs ?
+        this.options.afterAttrs(attr, buildOptions) :
+        attr
+      ));
   }
 
   async build(name, attrs = {}, buildOptions = {}) {
@@ -64,7 +69,14 @@ export default class FactoryGirl {
   }
 
   attrsMany(name, num, attrs, buildOptions) {
-    return this.getFactory(name).attrsMany(num, attrs, buildOptions);
+    return this.getFactory(name)
+      .attrsMany(num, attrs, buildOptions)
+      .then(attr => (this.options.afterAttrs ?
+        Promise.all(attr.map(
+          att => this.options.afterAttrs(att, buildOptions)
+        )) :
+        attr
+      ));
   }
 
   async buildMany(name, num, attrs, buildOptions) {
