@@ -27,6 +27,7 @@ describe('asyncPopulate', function () {
     const source = {
       num: 1,
       nullValue: null,
+      undefinedValue: undefined,
       str: 'hello',
       date: new Date,
       foo: new Foo,
@@ -63,6 +64,7 @@ describe('asyncPopulate', function () {
     expect(target).to.be.eql({
       num: 1,
       nullValue: null,
+      undefinedValue: undefined,
       str: 'hello',
       date: source.date,
       foo: source.foo,
