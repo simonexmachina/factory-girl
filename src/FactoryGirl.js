@@ -39,6 +39,10 @@ export default class FactoryGirl {
     return factory;
   }
 
+  remove(name) {
+    delete this.factories[name];
+  }
+
   extend(parent, name, childInitializer, options = {}) {
     if (this.getFactory(name, false)) {
       throw new Error(`Factory ${name} already defined`);
