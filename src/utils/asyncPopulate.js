@@ -14,6 +14,8 @@ export default function asyncPopulate(target, source) {
       promise = asyncPopulate(target[attr], source[attr]);
     } else if (source[attr] === null) {
       target[attr] = null;
+    } else if (typeof source[attr] === 'undefined') {
+      delete target[attr];
     } else if (isPlainObject(source[attr])) {
       target[attr] = target[attr] || {};
       promise = asyncPopulate(target[attr], source[attr]);

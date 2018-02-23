@@ -27,6 +27,7 @@ describe('asyncPopulate', function () {
     const source = {
       num: 1,
       nullValue: null,
+      undefinedValue: undefined,
       str: 'hello',
       date: new Date,
       foo: new Foo,
