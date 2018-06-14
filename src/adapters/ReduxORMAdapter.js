@@ -7,8 +7,8 @@ export default class ReduxORMAdapter extends DefaultAdapter {
     this.session = session;
   }
 
-  build(modelName, props) {
-    return this.session[modelName].create(props);
+  build(model, props) {
+    return this.session[model.modelName].create(props);
   }
 
   get(model, attr) {
