@@ -1,6 +1,6 @@
 # factory-girl
 
-[![Build Status](https://travis-ci.org/aexmachina/factory-girl.png)](https://travis-ci.org/aexmachina/factory-girl)
+[![Build Status](https://travis-ci.org/klarna/factory-girl.png)](https://travis-ci.org/klarna/factory-girl)
 
 `factory-girl` is a factory library for [Node.js](http://nodejs.org/) and the browser that is inspired by [Factory\_girl](http://github.com/thoughtbot/factory_girl). It works asynchronously and supports associations and the use of functions for generating attributes.
 
@@ -293,8 +293,8 @@ anotherFactory.setAdapter(new MongooseAdapter()); // use the Mongoose adapter
 This module started out as a fork of
 [factory-lady](https://github.com/petejkim/factory-lady), but the fork deviated quite a
 bit. This module uses an adapter to talk to your models so it can support different ORMs
-such as [Bookshelf](https://github.com/aexmachina/factory-girl-bookshelf),
-[Sequelize](https://github.com/aexmachina/factory-girl-sequelize),
+such as [Bookshelf](https://github.com/klarna/factory-girl-bookshelf),
+[Sequelize](https://github.com/klarna/factory-girl-sequelize),
 [JugglingDB](https://github.com/rehanift/factory-girl-jugglingdb), and
 [Mongoose](https://github.com/jesseclark/factory-girl-mongoose) (and doesn't use `throw`
 for errors that might occur during save).
@@ -308,4 +308,4 @@ Copyright (c) 2014 Simon Wade.
 Copyright (c) 2011 Peter Jihoon Kim.  
 
 This software is licensed under the [MIT
-License](http://github.com/aexmachina/factory-girl/raw/master/LICENSE.txt).
+License](http://github.com/klarna/factory-girl/raw/master/LICENSE.txt).

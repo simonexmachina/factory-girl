@@ -6,6 +6,8 @@
     "no-param-reassign": "off",
     "no-use-before-define": "off",
     "arrow-parens": ["error", "as-needed"],
-    "prefer-rest-params": "off"
+    "prefer-rest-params": "off",
+    "no-new": "off"
+
   }
 }

@@ -2,7 +2,7 @@
   "name": "factory-girl",
   "main": "index.js",
   "version": "5.0.1",
-  "homepage": "https://github.com/aexmachina/factory-girl",
+  "homepage": "https://github.com/klarna/factory-girl",
   "authors": [
     "aexmachina"
   ],
