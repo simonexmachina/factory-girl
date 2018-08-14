@@ -1,13 +1,11 @@
 {
-  "name": "factory-girl",
-  "description": "A factory library for Node.js and JavaScript inspired by factory_girl",
+  "name": "factory-duck",
+  "description": "A factory library for Node.js and JavaScript inspired by factory_girl and forked from factory-girl",
   "main": "./src/index",
   "author": [
     "@klarna",
     "@pnakibar",
-    "@mellbourn",
-    "@aexmachina",
-    "@chetanism"
+    "@mellbourn"
   ],
   "version": "5.0.1",
   "keywords": [
