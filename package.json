@@ -1,10 +1,11 @@
 {
-  "name": "factory-girl",
-  "description": "A factory library for Node.js and JavaScript inspired by factory_girl",
-  "main": "./src/index",
+  "name": "factory-duck",
+  "description": "A factory library for Node.js and JavaScript inspired by factory_girl and forked from factory-duck",
+  "main": "./dist/index",
   "author": [
-    "@aexmachina",
-    "@chetanism"
+    "@klarna",
+    "@pnakibar",
+    "@mellbourn"
   ],
   "babel": {
     "presets": [
@@ -16,7 +17,7 @@
       "transform-class-properties"
     ]
   },
-  "version": "5.0.1",
+  "version": "5.0.4",
   "keywords": [
     "factory",
     "test",
@@ -26,16 +27,16 @@
   ],
   "repository": {
     "type": "git",
-    "url": "http://github.com/aexmachina/factory-girl.git"
+    "url": "http://github.com/klarna/factory-duck.git"
   },
   "license": "MIT",
   "bugs": {
-    "url": "http://github.com/aexmachina/factory-girl/issues"
+    "url": "http://github.com/klarna/factory-duck/issues"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "http://github.com/aexmachina/factory-girl/raw/master/LICENSE"
+      "url": "http://github.com/klarna/factory-duck/raw/master/LICENSE"
     }
   ],
   "dependencies": {
@@ -75,11 +76,11 @@
     "sequelize": "^3.24.0",
     "should": "^6.0.3",
     "sinon": "^2.0.0-pre",
-    "sinon-chai": "https://github.com/sjmulder/sinon-chai.git#pr/sinon-2.0.0-pre",
+    "sinon-chai": "^2.0.0-pre",
     "sqlite3": "^3.1.4"
   },
   "scripts": {
-    "lint": "eslint src test tools",
+    "lint": "eslint src test tools --fix",
     "test": "NODE_ENV=test mocha",
     "test:cover": "NODE_ENV=test babel-node ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha",
     "build": "node tools/build",

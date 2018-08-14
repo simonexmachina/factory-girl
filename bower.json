@@ -1,13 +1,13 @@
 {
-  "name": "factory-girl",
+  "name": "factory-duck",
   "main": "index.js",
   "version": "5.0.1",
-  "homepage": "https://github.com/aexmachina/factory-girl",
+  "homepage": "https://github.com/klarna/factory-duck",
   "authors": [
     "aexmachina"
   ],
   "keywords": [
-    "factory-girl",
+    "factory-duck",
     "factory"
   ],
   "license": "MIT",

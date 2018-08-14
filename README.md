@@ -1,18 +1,18 @@
-# factory-girl
+# factory-duck
 
-[![Build Status](https://travis-ci.org/aexmachina/factory-girl.png)](https://travis-ci.org/aexmachina/factory-girl)
+[![Build Status](https://travis-ci.org/klarna/factory-duck.png)](https://travis-ci.org/klarna/factory-duck)
 
-`factory-girl` is a factory library for [Node.js](http://nodejs.org/) and the browser that is inspired by [Factory\_girl](http://github.com/thoughtbot/factory_girl). It works asynchronously and supports associations and the use of functions for generating attributes.
+`factory-duck` is a factory library for [Node.js](http://nodejs.org/) and the browser that is inspired by [Factory\_girl](http://github.com/thoughtbot/factory_girl). It works asynchronously and supports associations and the use of functions for generating attributes.
 
 ## Installation
 
 Node.js:
 
 ```bash
-npm install factory-girl
+npm install factory-duck
 ```
 
-To use `factory-girl` in the browser or other JavaScript environments, there are
+To use `factory-duck` in the browser or other JavaScript environments, there are
 builds for numerous module systems in the `dist/` directory.
 
 ## Usage
@@ -23,7 +23,7 @@ user factory.
 Here's the crash course:
 
 ```javascript
-const factory = require('factory-girl').factory;
+const factory = require('factory-duck').factory;
 const User    = require('../models/user');
 
 factory.define('user', User, {
@@ -250,7 +250,7 @@ specific models, or as the 'default adapter', which is used for any models for w
 adapter has not been specified. See the adapter docs for usage, but typical usage is:
 
 ```javascript
-const FactoryGirl = require('factory-girl');
+const FactoryGirl = require('factory-duck');
 const factory = FactoryGirl.factory;
 const adapter = new FactoryGirl.MongooseAdapter();
 
@@ -293,10 +293,10 @@ anotherFactory.setAdapter(new MongooseAdapter()); // use the Mongoose adapter
 This module started out as a fork of
 [factory-lady](https://github.com/petejkim/factory-lady), but the fork deviated quite a
 bit. This module uses an adapter to talk to your models so it can support different ORMs
-such as [Bookshelf](https://github.com/aexmachina/factory-girl-bookshelf),
-[Sequelize](https://github.com/aexmachina/factory-girl-sequelize),
-[JugglingDB](https://github.com/rehanift/factory-girl-jugglingdb), and
-[Mongoose](https://github.com/jesseclark/factory-girl-mongoose) (and doesn't use `throw`
+such as [Bookshelf](https://github.com/klarna/factory-duck-bookshelf),
+[Sequelize](https://github.com/klarna/factory-duck-sequelize),
+[JugglingDB](https://github.com/rehanift/factory-duck-jugglingdb), and
+[Mongoose](https://github.com/jesseclark/factory-duck-mongoose) (and doesn't use `throw`
 for errors that might occur during save).
 
 Version 4.0 is a complete rewrite with thanks to @chetanism.
@@ -308,4 +308,4 @@ Copyright (c) 2014 Simon Wade.
 Copyright (c) 2011 Peter Jihoon Kim.  
 
 This software is licensed under the [MIT
-License](http://github.com/aexmachina/factory-girl/raw/master/LICENSE.txt).
+License](http://github.com/klarna/factory-duck/raw/master/LICENSE.txt).
