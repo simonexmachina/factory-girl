@@ -7,7 +7,7 @@
     "@pnakibar",
     "@mellbourn"
   ],
-  "version": "5.0.3",
+  "version": "5.0.4",
   "keywords": [
     "factory",
     "test",
@@ -17,16 +17,16 @@
   ],
   "repository": {
     "type": "git",
-    "url": "http://github.com/klarna/factory-girl.git"
+    "url": "http://github.com/klarna/factory-duck.git"
   },
   "license": "MIT",
   "bugs": {
-    "url": "http://github.com/klarna/factory-girl/issues"
+    "url": "http://github.com/klarna/factory-duck/issues"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "http://github.com/klarna/factory-girl/raw/master/LICENSE"
+      "url": "http://github.com/klarna/factory-duck/raw/master/LICENSE"
     }
   ],
   "dependencies": {

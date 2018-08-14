@@ -1,6 +1,6 @@
 {
   "name": "factory-duck",
-  "description": "A factory library for Node.js and JavaScript inspired by factory_girl and forked from factory-girl",
+  "description": "A factory library for Node.js and JavaScript inspired by factory_girl and forked from factory-duck",
   "main": "./dist/index",
   "author": [
     "@klarna",
@@ -27,16 +27,16 @@
   ],
   "repository": {
     "type": "git",
-    "url": "http://github.com/klarna/factory-girl.git"
+    "url": "http://github.com/klarna/factory-duck.git"
   },
   "license": "MIT",
   "bugs": {
-    "url": "http://github.com/klarna/factory-girl/issues"
+    "url": "http://github.com/klarna/factory-duck/issues"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "http://github.com/klarna/factory-girl/raw/master/LICENSE"
+      "url": "http://github.com/klarna/factory-duck/raw/master/LICENSE"
     }
   ],
   "dependencies": {
