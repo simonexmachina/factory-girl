@@ -1,7 +1,7 @@
 {
   "name": "factory-duck",
   "description": "A factory library for Node.js and JavaScript inspired by factory_girl and forked from factory-girl",
-  "main": "./src/index",
+  "main": "./dist/index",
   "author": [
     "@klarna",
     "@pnakibar",
