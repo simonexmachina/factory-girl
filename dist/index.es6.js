@@ -1152,6 +1152,741 @@ function deprecate(method, see) {
   };
 }
 
+/* eslint-disable no-underscore-dangle */
+function syncPopulate(target, source) {
+  if ((typeof target === 'undefined' ? 'undefined' : _typeof(target)) !== 'object') {
+    throw new Error('Invalid target passed');
+  }
+  if ((typeof source === 'undefined' ? 'undefined' : _typeof(source)) !== 'object') {
+    throw new Error('Invalid source passed');
+  }
+
+  return _Object$keys(source).map(function (attr) {
+    var promise = void 0;
+    if (Array.isArray(source[attr])) {
+      target[attr] = [];
+      return syncPopulate(target[attr], source[attr]);
+    } else if (source[attr] === null) {
+      target[attr] = null;
+    } else if (isPlainObject$1(source[attr])) {
+      target[attr] = target[attr] || {};
+      return syncPopulate(target[attr], source[attr]);
+    } else if (typeof source[attr] === 'function') {
+      target[attr] = source[attr]();
+    } else {
+      target[attr] = source[attr];
+    }
+    return promise;
+  });
+}
+/* eslint-enable no-underscore-dangle */
+
+var objectProto$1 = _Object$getPrototypeOf({});
+function isPlainObject$1(o) {
+  return _Object$getPrototypeOf(o) === objectProto$1;
+}
+
+var Factory$1 = function () {
+  function Factory(Model, initializer) {
+    var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+    _classCallCheck(this, Factory);
+
+    this.name = null;
+    this.Model = null;
+    this.initializer = null;
+    this.options = {};
+
+    if (!Model) {
+      throw new Error('Invalid Model constructor passed to the factory');
+    }
+    if ((typeof initializer === 'undefined' ? 'undefined' : _typeof(initializer)) !== 'object' && typeof initializer !== 'function' || !initializer) {
+      throw new Error('Inalid initializer passed to the factory');
+    }
+
+    this.Model = Model;
+    this.initializer = initializer;
+    this.options = _extends({}, this.options, options);
+  }
+
+  _createClass(Factory, [{
+    key: 'getFactoryAttrs',
+    value: function getFactoryAttrs() {
+      var buildOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      var attrs = void 0;
+      if (typeof this.initializer === 'function') {
+        attrs = this.initializer(buildOptions);
+      } else {
+        attrs = _extends({}, this.initializer);
+      }
+      return attrs;
+    }
+  }, {
+    key: 'attrs',
+    value: function attrs() {
+      var extraAttrs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      var buildOptions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      var factoryAttrs = this.getFactoryAttrs(buildOptions);
+      var modelAttrs = {};
+
+      var filteredAttrs = _Object$keys(factoryAttrs).reduce(function (attrs, name) {
+        if (!extraAttrs.hasOwnProperty(name)) attrs[name] = factoryAttrs[name];
+        return attrs;
+      }, {});
+
+      syncPopulate(modelAttrs, filteredAttrs);
+      syncPopulate(modelAttrs, extraAttrs);
+
+      return modelAttrs;
+    }
+  }, {
+    key: 'build',
+    value: function build(adapter) {
+      var extraAttrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var buildOptions = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+      var modelAttrs = this.attrs(extraAttrs, buildOptions);
+      var model = adapter.build(this.Model, modelAttrs);
+      return this.options.afterBuild ? this.options.afterBuild(model, extraAttrs, buildOptions) : model;
+    }
+  }, {
+    key: 'create',
+    value: function create(adapter) {
+      var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var buildOptions = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+      var model = this.build(adapter, attrs, buildOptions);
+      var savedModel = adapter.save(model, this.Model);
+      return this.options.afterCreate ? this.options.afterCreate(savedModel, attrs, buildOptions) : savedModel;
+    }
+  }, {
+    key: 'attrsMany',
+    value: function attrsMany(num) {
+      var attrsArray = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+      var buildOptionsArray = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+
+      var attrObject = null;
+      var buildOptionsObject = null;
+
+      if ((typeof attrsArray === 'undefined' ? 'undefined' : _typeof(attrsArray)) === 'object' && !Array.isArray(attrsArray)) {
+        attrObject = attrsArray;
+        attrsArray = [];
+      }
+      if ((typeof buildOptionsArray === 'undefined' ? 'undefined' : _typeof(buildOptionsArray)) === 'object' && !Array.isArray(buildOptionsArray)) {
+        buildOptionsObject = buildOptionsArray;
+        buildOptionsArray = [];
+      }
+      if (typeof num !== 'number' || num < 1) {
+        new Error('Invalid number of objects requested');
+      }
+      if (!Array.isArray(attrsArray)) {
+        new Error('Invalid attrsArray passed');
+      }
+      if (!Array.isArray(buildOptionsArray)) {
+        new Error('Invalid buildOptionsArray passed');
+      }
+      attrsArray.length = buildOptionsArray.length = num;
+      var models = [];
+      for (var i = 0; i < num; i++) {
+        models[i] = this.attrs(attrObject || attrsArray[i] || {}, buildOptionsObject || buildOptionsArray[i] || {});
+      }
+      return models;
+    }
+  }, {
+    key: 'buildMany',
+    value: function buildMany(adapter, num) {
+      var attrsArray = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+
+      var _this = this;
+
+      var buildOptionsArray = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
+      var buildCallbacks = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : true;
+
+      var attrs = this.attrsMany(num, attrsArray, buildOptionsArray);
+      var builtModels = attrs.map(function (attr) {
+        return adapter.build(_this.Model, attr);
+      });
+      return this.options.afterBuild && buildCallbacks ? builtModels.map(function (builtModel) {
+        return _this.options.afterBuild(builtModel, attrsArray, buildOptionsArray);
+      }) : builtModels;
+    }
+  }, {
+    key: 'createMany',
+    value: function createMany(adapter, num) {
+      var _this2 = this;
+
+      var attrsArray = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+      var buildOptionsArray = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
+
+      if (Array.isArray(num)) {
+        buildOptionsArray = attrsArray;
+        attrsArray = num;
+        num = attrsArray.length;
+      }
+      var models = this.buildMany(adapter, num, attrsArray, buildOptionsArray);
+      var createdModels = models.map(function (model) {
+        return adapter.save(model, _this2.Model);
+      });
+      return this.options.afterCreate ? createdModels.map(function (createdModel) {
+        return _this2.options.afterCreate(createdModel, attrsArray, buildOptionsArray);
+      }) : createdModels;
+    }
+  }]);
+
+  return Factory;
+}();
+
+var Generator$1 = function () {
+  function Generator(factoryGirl) {
+    _classCallCheck(this, Generator);
+
+    if (!factoryGirl) {
+      throw new Error('No FactoryGirl instance provided');
+    }
+    this.factoryGirl = factoryGirl;
+  }
+
+  _createClass(Generator, [{
+    key: 'generate',
+    value: function generate() {
+      throw new Error('Override this method to generate a value');
+    }
+  }, {
+    key: 'getAttribute',
+    value: function getAttribute(name, model, key) {
+      return this.factoryGirl.getAdapter(name).get(model, key);
+    }
+  }]);
+
+  return Generator;
+}();
+
+var Sequence$1 = function (_Generator) {
+  _inherits(Sequence, _Generator);
+
+  function Sequence() {
+    _classCallCheck(this, Sequence);
+
+    return _possibleConstructorReturn(this, (Sequence.__proto__ || _Object$getPrototypeOf(Sequence)).apply(this, arguments));
+  }
+
+  _createClass(Sequence, [{
+    key: 'generate',
+    value: function generate() {
+      var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+      var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+      if (typeof id === 'function') {
+        callback = id;
+        id = null;
+      }
+      id = id || this.id || (this.id = generateId$1());
+      Sequence.sequences[id] = Sequence.sequences[id] || 1;
+      var next = Sequence.sequences[id]++;
+      return callback ? callback(next) : next;
+    }
+  }], [{
+    key: 'reset',
+    value: function reset() {
+      var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+      if (!id) {
+        Sequence.sequences = {};
+      } else {
+        Sequence.sequences[id] = undefined;
+      }
+    }
+  }]);
+
+  return Sequence;
+}(Generator$1);
+
+Sequence$1.sequences = {};
+function generateId$1() {
+  var id = void 0;
+  var i = 0;
+  do {
+    id = '_' + i++;
+  } while (id in Sequence$1.sequences);
+  return id;
+}
+
+var Assoc$1 = function (_Generator) {
+  _inherits(Assoc, _Generator);
+
+  function Assoc() {
+    _classCallCheck(this, Assoc);
+
+    return _possibleConstructorReturn(this, (Assoc.__proto__ || _Object$getPrototypeOf(Assoc)).apply(this, arguments));
+  }
+
+  _createClass(Assoc, [{
+    key: 'generate',
+    value: function generate(name) {
+      var key = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      var attrs = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      var buildOptions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
+      var model = this.factoryGirl.create(name, attrs, buildOptions);
+      return key ? this.getAttribute(name, model, key) : model;
+    }
+  }]);
+
+  return Assoc;
+}(Generator$1);
+
+var AssocAttrs$1 = function (_Generator) {
+  _inherits(AssocAttrs, _Generator);
+
+  function AssocAttrs() {
+    _classCallCheck(this, AssocAttrs);
+
+    return _possibleConstructorReturn(this, (AssocAttrs.__proto__ || _Object$getPrototypeOf(AssocAttrs)).apply(this, arguments));
+  }
+
+  _createClass(AssocAttrs, [{
+    key: 'generate',
+    value: function generate(name) {
+      var key = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      var attrs = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      var buildOptions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
+      var model = this.factoryGirl.attrs(name, attrs, buildOptions);
+      return key ? this.getAttribute(name, model, key) : model;
+    }
+  }]);
+
+  return AssocAttrs;
+}(Generator$1);
+
+var AssocMany$1 = function (_Generator) {
+  _inherits(AssocMany, _Generator);
+
+  function AssocMany() {
+    _classCallCheck(this, AssocMany);
+
+    return _possibleConstructorReturn(this, (AssocMany.__proto__ || _Object$getPrototypeOf(AssocMany)).apply(this, arguments));
+  }
+
+  _createClass(AssocMany, [{
+    key: 'generate',
+    value: function generate(name, num) {
+      var key = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+      var _this2 = this;
+
+      var attrs = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+      var buildOptions = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
+
+      var models = this.factoryGirl.createMany(name, num, attrs, buildOptions);
+      return key ? models.map(function (model) {
+        return _this2.getAttribute(name, model, key);
+      }) : models;
+    }
+  }]);
+
+  return AssocMany;
+}(Generator$1);
+
+var AssocAttrsMany$1 = function (_Generator) {
+  _inherits(AssocAttrsMany, _Generator);
+
+  function AssocAttrsMany() {
+    _classCallCheck(this, AssocAttrsMany);
+
+    return _possibleConstructorReturn(this, (AssocAttrsMany.__proto__ || _Object$getPrototypeOf(AssocAttrsMany)).apply(this, arguments));
+  }
+
+  _createClass(AssocAttrsMany, [{
+    key: 'generate',
+    value: function generate(name, num) {
+      var key = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+      var _this2 = this;
+
+      var attrs = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+      var buildOptions = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
+
+      if (typeof num !== 'number' || num < 1) {
+        throw new Error('Invalid number of items requested');
+      }
+      var models = this.factoryGirl.attrsMany(name, num, attrs, buildOptions);
+      return key ? models.map(function (model) {
+        return _this2.getAttribute(name, model, key);
+      }) : models;
+    }
+  }]);
+
+  return AssocAttrsMany;
+}(Generator$1);
+
+var chance$1 = new Chance();
+
+var ChanceGenerator$1 = function (_Generator) {
+  _inherits(ChanceGenerator, _Generator);
+
+  function ChanceGenerator() {
+    _classCallCheck(this, ChanceGenerator);
+
+    return _possibleConstructorReturn(this, (ChanceGenerator.__proto__ || _Object$getPrototypeOf(ChanceGenerator)).apply(this, arguments));
+  }
+
+  _createClass(ChanceGenerator, [{
+    key: 'generate',
+    value: function generate(chanceMethod) {
+      if (typeof chance$1[chanceMethod] !== 'function') {
+        throw new Error('Invalid chance method requested');
+      }
+
+      for (var _len = arguments.length, options = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        options[_key - 1] = arguments[_key];
+      }
+
+      return chance$1[chanceMethod].apply(chance$1, options);
+    }
+  }]);
+
+  return ChanceGenerator;
+}(Generator$1);
+
+var OneOf$1 = function (_Generator) {
+  _inherits(OneOf, _Generator);
+
+  function OneOf() {
+    _classCallCheck(this, OneOf);
+
+    return _possibleConstructorReturn(this, (OneOf.__proto__ || _Object$getPrototypeOf(OneOf)).apply(this, arguments));
+  }
+
+  _createClass(OneOf, [{
+    key: 'generate',
+    value: function generate(possibleValues) {
+      if (!Array.isArray(possibleValues)) {
+        throw new Error('Expected an array of possible values');
+      }
+
+      if (possibleValues.length < 1) {
+        throw new Error('Empty array passed for possible values');
+      }
+
+      var size = possibleValues.length;
+      var randomIndex = Math.floor(Math.random() * size);
+      var value = possibleValues[randomIndex];
+      return typeof value === 'function' ? value() : value;
+    }
+  }]);
+
+  return OneOf;
+}(Generator$1);
+
+/* eslint-disable no-unused-vars */
+var DefaultAdapter$1 = function () {
+  function DefaultAdapter() {
+    _classCallCheck(this, DefaultAdapter);
+  }
+
+  _createClass(DefaultAdapter, [{
+    key: "build",
+    value: function build(Model, props) {
+      return new Model(props);
+    }
+  }, {
+    key: "save",
+    value: function save(model, Model) {
+      model.save();
+      return model;
+    }
+  }, {
+    key: "destroy",
+    value: function destroy(model, Model) {
+      model.destroy();
+      return model;
+    }
+  }, {
+    key: "get",
+    value: function get(model, attr, Model) {
+      return model.get(attr);
+    }
+  }, {
+    key: "set",
+    value: function set(props, model, Model) {
+      return model.set(props);
+    }
+  }]);
+
+  return DefaultAdapter;
+}();
+
+var SyncFactoryGirl = function () {
+  function SyncFactoryGirl() {
+    var _this = this;
+
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    _classCallCheck(this, SyncFactoryGirl);
+
+    this.factories = {};
+    this.options = {};
+    this.adapters = {};
+    this.created = new _Set();
+
+    this.assoc = generatorThunk$1(this, Assoc$1);
+    this.assocMany = generatorThunk$1(this, AssocMany$1);
+    this.assocBuild = deprecate$1('assocBuild', 'assocAttrs');
+    this.assocBuildMany = deprecate$1('assocBuildMany', 'assocAttrsMany');
+    this.assocAttrs = generatorThunk$1(this, AssocAttrs$1);
+    this.assocAttrsMany = generatorThunk$1(this, AssocAttrsMany$1);
+    this.seq = this.sequence = function () {
+      return generatorThunk$1(_this, Sequence$1).apply(undefined, arguments);
+    };
+    this.resetSeq = this.resetSequence = function (id) {
+      Sequence$1.reset(id);
+    };
+    this.chance = generatorThunk$1(this, ChanceGenerator$1);
+    this.oneOf = generatorThunk$1(this, OneOf$1);
+
+    this.defaultAdapter = new DefaultAdapter$1();
+    this.options = options;
+  }
+
+  _createClass(SyncFactoryGirl, [{
+    key: 'define',
+    value: function define(name, Model, initializer) {
+      var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
+      if (this.getFactory(name, false)) {
+        throw new Error('Factory ' + name + ' already defined');
+      }
+      var factory = this.factories[name] = new Factory$1(Model, initializer, options);
+      return factory;
+    }
+  }, {
+    key: 'extend',
+    value: function extend(parent, name, childInitializer) {
+      var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
+      if (this.getFactory(name, false)) {
+        throw new Error('Factory ' + name + ' already defined');
+      }
+      var parentFactory = this.getFactory(parent, true);
+      var Model = options.model || parentFactory.Model;
+      var jointInitializer = void 0;
+
+      function resolveInitializer(initializer, buildOptions) {
+        return typeof initializer === 'function' ? initializer(buildOptions) : initializer;
+      }
+
+      if (typeof parentFactory.initializer === 'function' || typeof childInitializer === 'function') {
+        jointInitializer = function initializer() {
+          var buildOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+          return _Object$assign({}, resolveInitializer(parentFactory.initializer, buildOptions), resolveInitializer(childInitializer, buildOptions));
+        };
+      } else {
+        jointInitializer = _Object$assign({}, parentFactory.initializer, childInitializer);
+      }
+
+      var factory = this.factories[name] = new Factory$1(Model, jointInitializer, options);
+      return factory;
+    }
+  }, {
+    key: 'attrs',
+    value: function attrs(name, _attrs) {
+      var buildOptions = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+      return this.getFactory(name).attrs(_attrs, buildOptions);
+    }
+  }, {
+    key: 'build',
+    value: function build(name) {
+      var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var buildOptions = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+      var adapter = this.getAdapter(name);
+      var model = this.getFactory(name).build(adapter, attrs, buildOptions);
+      return this.options.afterBuild ? this.options.afterBuild(model, attrs, buildOptions) : model;
+    }
+  }, {
+    key: 'create',
+    value: function create(name, attrs) {
+      var buildOptions = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+      var adapter = this.getAdapter(name);
+      var createdModel = this.getFactory(name).create(adapter, attrs, buildOptions);
+      var model = this.addToCreatedList(adapter, createdModel);
+      return this.options.afterCreate ? this.options.afterCreate(model, attrs, buildOptions) : model;
+    }
+  }, {
+    key: 'attrsMany',
+    value: function attrsMany(name, num, attrs) {
+      var buildOptions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
+      return this.getFactory(name).attrsMany(num, attrs, buildOptions);
+    }
+  }, {
+    key: 'buildMany',
+    value: function buildMany(name, num, attrs) {
+      var _this2 = this;
+
+      var buildOptions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
+      var adapter = this.getAdapter(name);
+      var models = this.getFactory(name).buildMany(adapter, num, attrs, buildOptions);
+      return this.options.afterBuild ? models.map(function (model) {
+        return _this2.options.afterBuild(model, attrs, buildOptions);
+      }) : models;
+    }
+  }, {
+    key: 'createMany',
+    value: function createMany(name, num, attrs) {
+      var _this3 = this;
+
+      var buildOptions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
+      var adapter = this.getAdapter(name);
+      var createdModels = this.getFactory(name).createMany(adapter, num, attrs, buildOptions);
+      var models = this.addToCreatedList(adapter, createdModels);
+      return this.options.afterCreate ? models.map(function (model) {
+        return _this3.options.afterCreate(model, attrs, buildOptions);
+      }) : models;
+    }
+  }, {
+    key: 'getFactory',
+    value: function getFactory(name) {
+      var throwError = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+      if (!this.factories[name] && throwError) {
+        throw new Error('Invalid factory \'' + name + '\' requested');
+      }
+      return this.factories[name];
+    }
+  }, {
+    key: 'withOptions',
+    value: function withOptions(options) {
+      var merge = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+      this.options = merge ? _extends({}, this.options, options) : options;
+    }
+  }, {
+    key: 'getAdapter',
+    value: function getAdapter(factory) {
+      return factory ? this.adapters[factory] || this.defaultAdapter : this.defaultAdapter;
+    }
+  }, {
+    key: 'addToCreatedList',
+    value: function addToCreatedList(adapter, models) {
+      if (!Array.isArray(models)) {
+        this.created.add([adapter, models]);
+      } else {
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = _getIterator(models), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var model = _step.value;
+
+            this.created.add([adapter, model]);
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+              _iterator.return();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+      }
+      return models;
+    }
+  }, {
+    key: 'cleanUp',
+    value: function cleanUp() {
+      var createdArray = [];
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
+
+      try {
+        for (var _iterator2 = _getIterator(this.created), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var c = _step2.value;
+
+          createdArray.push(c);
+        }
+      } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion2 && _iterator2.return) {
+            _iterator2.return();
+          }
+        } finally {
+          if (_didIteratorError2) {
+            throw _iteratorError2;
+          }
+        }
+      }
+
+      createdArray.forEach(function (_ref) {
+        var _ref2 = _slicedToArray(_ref, 2),
+            adapter = _ref2[0],
+            model = _ref2[1];
+
+        return adapter.destroy(model, model.constructor);
+      });
+      this.created.clear();
+      this.resetSeq();
+    }
+  }, {
+    key: 'setAdapter',
+    value: function setAdapter(adapter) {
+      var _this4 = this;
+
+      var factoryNames = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+      if (!factoryNames) {
+        this.defaultAdapter = adapter;
+      } else {
+        factoryNames = Array.isArray(factoryNames) ? factoryNames : [factoryNames];
+        factoryNames.forEach(function (name) {
+          _this4.adapters[name] = adapter;
+        });
+      }
+      return adapter;
+    }
+  }]);
+
+  return SyncFactoryGirl;
+}();
+
+function generatorThunk$1(factoryGirl, SomeGenerator) {
+  var generator = new SomeGenerator(factoryGirl);
+  return function () {
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return function () {
+      return generator.generate.apply(generator, args);
+    };
+  };
+}
+
+function deprecate$1(method, see) {
+  return function () {
+    throw new Error('The ' + method + ' method has been deprecated, use ' + see + ' instead');
+  };
+}
+
 /* eslint-disable no-unused-vars */
 
 var ObjectAdapter = function (_DefaultAdapter) {
@@ -1397,5 +2132,8 @@ var ReduxORMAdapter = function (_DefaultAdapter) {
 var factory = new FactoryGirl();
 factory.FactoryGirl = FactoryGirl;
 
-export { ObjectAdapter, BookshelfAdapter, DefaultAdapter, MongooseAdapter, SequelizeAdapter, ReduxORMAdapter, factory };export default factory;
+var syncFactory = new SyncFactoryGirl();
+syncFactory.FactoryGirl = SyncFactoryGirl;
+
+export { ObjectAdapter, BookshelfAdapter, DefaultAdapter, MongooseAdapter, SequelizeAdapter, ReduxORMAdapter, factory, syncFactory };export default factory;
 //# sourceMappingURL=index.es6.js.map
