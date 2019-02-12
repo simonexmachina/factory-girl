@@ -35,7 +35,7 @@ export default class FactoryGirl {
     if (this.getFactory(name, false)) {
       throw new Error(`Factory ${name} already defined`);
     }
-    const factory = this.factories[name] = new Factory(Model, initializer, options);
+    const factory = this.factories[name] = new Factory(Model, typeof(initializer) === "function" ? initializer(options) : initializer, options);
     return factory;
   }
 

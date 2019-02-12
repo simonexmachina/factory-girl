@@ -39,9 +39,11 @@ Factory.define('User', User, {
 Factory.define('ObjSeq', DummyModel, {
   s1: Factory.seq(),
   s2: Factory.seq('ObjSeq.s2'),
-  s3: Factory.seq(),
+  s3: Factory.seq(n => `seq-${n}`),
 });
 
-Factory.define('FuncSeq', DummyModel, () => ({
-  s1: Factory.seq('FuncSeq.s1'),
+Factory.define('FuncSeq', DummyModel, options => ({
+  s1: Factory.seq(),
+  s2: Factory.seq('FuncSeq.s2'),
+  s3: Factory.seq(n => `${options.prefix}-${n}`),
 }));

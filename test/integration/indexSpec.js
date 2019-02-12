@@ -60,19 +60,22 @@ describe('indexIntegration', function () {
     it('generates sequences correctly', asyncFunction(async function () {
       const objSeq1 = await Factory.build('ObjSeq');
       const objSeq2 = await Factory.build('ObjSeq');
-
-      const funcSeq1 = await Factory.build('FuncSeq');
-      const funcSeq2 = await Factory.build('FuncSeq');
+      const funcSeq1 = await Factory.build('FuncSeq', {}, { prefix: 'seq' });
+      const funcSeq2 = await Factory.build('FuncSeq', {}, { prefix: 'seq' });
 
       expect(objSeq1.s1).to.be.equal(1);
       expect(objSeq1.s2).to.be.equal(1);
-      expect(objSeq1.s3).to.be.equal(1);
+      expect(objSeq1.s3).to.be.equal('seq-1');
       expect(funcSeq1.s1).to.be.equal(1);
+      expect(funcSeq1.s2).to.be.equal(1);
+      expect(funcSeq1.s3).to.be.equal('seq-1');
 
       expect(objSeq2.s1).to.be.equal(2);
       expect(objSeq2.s2).to.be.equal(2);
-      expect(objSeq2.s3).to.be.equal(2);
+      expect(objSeq2.s3).to.be.equal('seq-2');
       expect(funcSeq2.s1).to.be.equal(2);
+      expect(funcSeq2.s2).to.be.equal(2);
+      expect(funcSeq2.s3).to.be.equal('seq-2');
     }));
   });
 });
