@@ -82,7 +82,7 @@ factory.define('account', Account, buildOptions => {
   };
 
   // use build options to modify the returned object
-  if (buildOptions.confirmedUser) {
+  if (buildOptions.confirmed) {
     attrs.confirmed = true;
     attrs.confirmedAt = new Date();
   }
