@@ -45,6 +45,7 @@ export default class FactoryGirl {
     }
     const parentFactory = this.getFactory(parent, true);
     const Model = options.model || parentFactory.Model;
+    const jointOptions = { ...parentFactory.options, ...options };
     let jointInitializer;
 
     function resolveInitializer(initializer, buildOptions) {
@@ -66,7 +67,11 @@ export default class FactoryGirl {
       jointInitializer = Object.assign({}, parentFactory.initializer, childInitializer);
     }
 
-    const factory = this.factories[name] = new Factory(Model, jointInitializer, options);
+    const factory = this.factories[name] = new Factory(
+      Model,
+      jointInitializer,
+      jointOptions
+    );
     return factory;
   }
 
