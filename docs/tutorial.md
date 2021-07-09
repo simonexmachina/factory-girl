@@ -4,6 +4,24 @@ This tutorial introduces the capabilities of `factory-girl`. We'll start with a 
 factory for a hypothetical `User` model and gradually add to it. This tutorial may not
 cover all aspects of `factory-girl`, but should serve as a good starting point.
 
+### The `User` Model
+
+For these examples we'll assume we have a model like the following with a constructor
+that takes one object with the attributes necessary to initialize the model class.
+
+```javascript
+class User {
+    constructor(attrs = {}) {
+    this.attrs = Object.assign({
+      email: attrs.email || 'someone@something.com',
+      password: attrs.password || 'secure-password',
+    }, attrs);
+  }
+}
+```
+
+The factory methods will invoke this constructor during the construction of model objects.
+
 ### The `User` Factory
 
 Let's start with a simple `User` factory, as we go on, we'll keep on modifying

@@ -36,6 +36,26 @@ factory.build('user').then(user => {
 });
 ```
 
+## Defining Models
+
+Define models that have a constructor that takes an object with the attributes needed to
+instantiate an instance of the model.
+
+For example:
+
+```javascript
+class User {
+    constructor(attrs = {}) {
+    this.attrs = Object.assign({
+      username: attrs.username || 'George',
+      score: attrs.score || 27,
+    }, attrs);
+  }
+}
+```
+
+The factory methods will invoke this constructor during the construction of model objects.
+
 ## Defining Factories
 
 Define factories using the `factory.define()` method.
